@@ -1,6 +1,6 @@
 ---
 title: "Week 3, Day 2"
-author: "David Kane"
+author: "Akila Muthukumar"
 output: html_document
 ---
 
@@ -40,8 +40,8 @@ sep_new <-
   select( -instructor_full_name, -course_section_code, -(grad:total)) %>%
   rename_with(~ str_replace(.x, "course_", "")) %>% 
   group_by(id, title, name, department) %>% 
-  summarize(u_grad = sum(u_grad), .groups = "drop") %>% 
-  filter(u_grad > 10)
+  summarize(u_grad2 = sum(u_grad), .groups = "drop") %>% 
+  filter(u_grad2 > 10)
 ```
 
 ### Scene 1
@@ -58,9 +58,50 @@ d) Write down some thoughts about what might explain these increases and decreas
 
 See [here](https://rpubs.com/dkane/week-3) for my answers. No need to copy exactly what I have done! Make yours better.
 
+```{r}
+
+# part A making a table
+sep <- inner_join(sep_old, sep_new, by = c("id", "title", "name", "department")) %>%
+  mutate(difference = u_grad2 - u_grad) %>%
+  arrange(desc(difference)) %>%
+  slice(1:5)
+
+sep %>%
+  gt() %>%
+  tab_header(title = "Increase in Course Enrollment")
+
+sep2 <- inner_join(sep_old, sep_new, by = c("id", "title", "name", "department")) %>%
+  mutate(difference = u_grad2 - u_grad) %>%
+  arrange(desc(difference)) %>%
+  slice(412:416)
+
+# part B making a table
+sep2 %>%
+  gt() %>%
+  tab_header(title = "Decrease in Course Enrollment")
+
+sepcombo <- inner_join(sep_old, sep_new, 
+                       by = c("id", "title", "name", "department")) %>%
+  mutate(difference = u_grad2 - u_grad) %>%
+  arrange(desc(difference)) %>%
+  slice(1:5, 412:416)
+
+# part C making a graph
+ggplot(sepcombo, aes(x = fct_reorder(title, difference), 
+                y = difference, fill = department)) +
+  geom_col() +
+  labs(y = "Difference in Enrollment", 
+       x = "Course", 
+       title = "Change in Undergrad Enrollment since Sept 1st") +
+  scale_fill_discrete(name = "Department") +
+  coord_flip() +
+  theme(axis.text.x = element_text(size = 8))
+
+# part D --> amount of course time committment and work likely affects it
+# No way to know for sure that is part of wisdom and temperance
 
 
-
+```
 
 ## Scene 2
 
@@ -70,6 +111,17 @@ With our actual Preceptor Table, how might we investigate the effect of work ass
 
 Make a spreadsheet --- I recommend using Google sheets, but anything will do --- which shows a simple version of that actual Preceptor Table. What are the units? What are the outcomes? What is the treatment? What is the causal effect? You may assign whichever of the 10 classes you like to treatment and the rest to control.
 
+```{r scene2}
+# We need each class and the average amount of work assigned in each With our
+# currently available data (doesn't include actual number of hours ), we have to
+# make the assumption Classes are dropped because of workload as opposed to
+# other factor
+
+# In our actual Preceptor Table, we can use the percent who dropped and assume 
+# They all 
+
+```
+
 ## Scene 3
 
 **Prompt:** Dean Claybaugh does a survey and discovers that 100 of the 500 courses at Harvard gave "lots" of work in the first weeks of class and 400 of the courses gave a "normal" amount of work.
@@ -77,6 +129,11 @@ Make a spreadsheet --- I recommend using Google sheets, but anything will do ---
 Describe, in words, how you would estimate the Average Treatment Effect. 
 
 Describe why this estimate might be a very bad estimate of the true Average Treatment effect.
+
+```{r scene 3}
+
+```
+
 
 ### Scene 4
 
